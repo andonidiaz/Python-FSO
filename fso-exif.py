@@ -25,6 +25,7 @@
 #
 
 from Tkinter import *
+import tkMessageBox
 import tkFileDialog
 import os
 import fnmatch
@@ -79,7 +80,6 @@ def movedirectory():
 		
 	window_newdir=Toplevel()
 	window_newdir.title("Escollir nou Directori")
-	#window_newdir.focus_set()
 	imagenes_copiar = imglist.curselection()
 		
 	newdir_frame=Frame(window_newdir)
@@ -119,6 +119,7 @@ def changecopyright(mycopy):
 	newcopy_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2, anchor=N)
 def cleanList():
 	imglist.delete(0,imglist.size())
+	hide_move_directory()
 
 def loadFiles(path):
 	cleanList()
@@ -126,10 +127,58 @@ def loadFiles(path):
 		for filename in fnmatch.filter(filenames, '*.jpg'):
 			#Ruta entera: os.path.join(root, filename)
 			imglist.insert(END, os.path.join(root, filename))
+	
+def hide_move_directory():
+	selected.pack_forget()
+	mov_directory.pack_forget()
+	camera.set("")
+	objectiu.set("")
+	longitud.set("")
+	exposicio.set("")
+	diafragma.set("")
+	iso.set("")
+	midax.set("")
+	miday.set("")
+	copyr.set("")
+	dia.set("")
+	mes.set("")
+	year.set("")
+	thumb_img.pack_forget()
+	
+def show_move_directory():
+	selected.pack(side=LEFT)
+	mov_directory.pack(side=LEFT)
+	
+def mensaje_ventana(cabecera, mensaje):
+	
+	tkMessageBox.showinfo(title=cabecera,message=mensaje)
+	
+	"""
+	Hay un ejemplo de funcionamiento de esta función en la linia 177
+	
+	Esto podría ser una alternativa eliminando un parámetro:
+	
+	window_newdir=Toplevel()
+	window_newdir.title("Missatge d'estat")
+	window_newdir.minsize(400, 75)
+	newdir_frame=Frame(window_newdir)
+	newdir_label=Label(newdir_frame,textvariable=mensaje)
+	newdir_label.pack()
+	accept_button=Button(newdir_frame,text="Acceptar",command=window_newdir.destroy)
+	accept_button.pack(side=BOTTOM)
+	newdir_frame.pack(side=TOP,expand=TRUE, fill=X)"""
+	
 #MAIN
 
 window=Tk()
 window.title("Tractament Imatge EXIF")
+window.minsize(750, 475)
+
+"""
+Ejemplo de funcionamiento de la función mensaje_ventana
+cabecera='Hola'
+mensaje='Estoy informando'
+mensaje_ventana(cabecera,mensaje)"""
 
 #HEADER
 
@@ -144,18 +193,26 @@ body=Frame(window)
 #IMG LIST
 images_list=Frame(body)
 scrollist=Scrollbar(images_list,orient=VERTICAL)
-imglist=Listbox(images_list,yscrollcommand=scrollist.set,selectmode='multiple')
+scrollistx=Scrollbar(images_list,orient=HORIZONTAL)
+
+imglist=Listbox(images_list,yscrollcommand=scrollist.set,xscrollcommand=scrollistx.set,selectmode='multiple')
+
+scrollistx.config(command=imglist.xview)
+scrollistx.pack(side=BOTTOM,expand=FALSE,fill=X,anchor=N)
 
 scrollist.config(command=imglist.yview)
-scrollist.pack(side=RIGHT,expand=TRUE,fill=Y)
+scrollist.pack(side=RIGHT,expand=TRUE,fill=Y,anchor=W)
 
-imglist.pack(side=LEFT,expand=TRUE,fill=BOTH)
-images_list.pack(side=LEFT,fill=Y, anchor=NW)
+imglist.pack(side=TOP,expand=TRUE,fill=Y,anchor=N)
+
+images_list.pack(side=LEFT,expand=TRUE,fill=Y, anchor=NW)
+
 
 def ocultarSeleccionats():
 	imatges_seleccionades =imglist.curselection()
 	for i in reversed(xrange(len(imatges_seleccionades))):
 		imglist.delete(imatges_seleccionades[i])
+	hide_move_directory()
 
 def ocultarNoSeleccionats():
 	imatges_seleccionades = imglist.curselection()
@@ -177,6 +234,7 @@ clean_list.pack(side=RIGHT,anchor=CENTER)
 
 def getList():
 	loadFiles(directory.get())
+	hide_move_directory()
 
 fill_list=Button(menu,text="Omplir",command=getList)
 fill_list.pack(side=RIGHT,anchor=CENTER)
@@ -260,64 +318,63 @@ mes=StringVar()
 
 year=StringVar()
 
-
 camera_frame=Frame(exif)
 camera_button=Button(camera_frame,text="Càmera:",command=window.quit, width=10)
 camera_button.pack(side=LEFT)
-camera_label=Label(camera_frame,textvariable=camera,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W)
+camera_label=Entry(camera_frame,textvariable=camera,borderwidth=1,bg="#FFFFC4",width=4)
 camera_label.pack(side=LEFT, expand=TRUE, fill=X)
 camera_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 objectiu_frame=Frame(exif)
 objectiu_button=Button(objectiu_frame,text="Objectiu:",command=window.quit, width=10)
 objectiu_button.pack(side=LEFT)
-objectiu_label=Label(objectiu_frame,textvariable=objectiu,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W)
+objectiu_label=Entry(objectiu_frame,textvariable=objectiu,borderwidth=1,bg="#FFFFC4",width=4)
 objectiu_label.pack(side=LEFT, expand=TRUE, fill=X)
 objectiu_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 longitud_frame=Frame(exif)
 longitud_button=Button(longitud_frame,text="Longitud Focal:",command=window.quit, width=10)
 longitud_button.pack(side=LEFT)
-longitud_label=Label(longitud_frame,textvariable=longitud,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W)
+longitud_label=Entry(longitud_frame,textvariable=longitud,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",width=4)
 longitud_label.pack(side=LEFT, expand=TRUE, fill=X)
 longitud_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 exposicio_frame=Frame(exif)
 exposicio_button=Button(exposicio_frame,text="Exposició:",command=window.quit, width=10)
 exposicio_button.pack(side=LEFT)
-exposicio_label=Label(exposicio_frame,textvariable=exposicio,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W)
+exposicio_label=Entry(exposicio_frame,textvariable=exposicio,borderwidth=1,bg="#FFFFC4",width=4)
 exposicio_label.pack(side=LEFT, expand=TRUE, fill=X)
 exposicio_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 diafragma_frame=Frame(exif)
 diafragma_button=Button(diafragma_frame,text="Diafragma:",command=window.quit, width=10)
 diafragma_button.pack(side=LEFT)
-diafragma_label=Label(diafragma_frame,textvariable=diafragma,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W)
+diafragma_label=Entry(diafragma_frame,textvariable=diafragma,borderwidth=1,bg="#FFFFC4",width=4)
 diafragma_label.pack(side=LEFT, expand=TRUE, fill=X)
 diafragma_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 iso_frame=Frame(exif)
 iso_button=Button(iso_frame,text="ISO:",command=window.quit, width=10, pady=5)
 iso_button.pack(side=LEFT)
-iso_label=Label(iso_frame,textvariable=iso,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W)
+iso_label=Entry(iso_frame,textvariable=iso,borderwidth=1,bg="#FFFFC4",width=4)
 iso_label.pack(side=LEFT, expand=TRUE, fill=X)
 iso_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 mida_frame=Frame(exif)
 mida_button=Button(mida_frame,text="Mida:",command=window.quit, width=10)
 mida_button.pack(side=LEFT)
-midax_label=Label(mida_frame,textvariable=midax,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=E)
+midax_label=Entry(mida_frame,textvariable=midax,borderwidth=1,bg="#FFFFC4",width=4)
 midax_label.pack(side=LEFT, expand=TRUE, fill=X)
 x_label=Label(mida_frame,text="x",anchor=W)
 x_label.pack(side=LEFT)
-miday_label=Label(mida_frame,textvariable=miday,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W)
+miday_label=Entry(mida_frame,textvariable=miday,borderwidth=1,bg="#FFFFC4",width=4)
 miday_label.pack(side=LEFT, expand=TRUE, fill=X)
 mida_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 copyr_frame=Frame(exif)
 copyr_button=Button(copyr_frame,text="Copyright:",command=window.quit, width=10)
 copyr_button.pack(side=LEFT)
-copyr_label=Label(copyr_frame,textvariable=copyr,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W)
+copyr_label=Entry(copyr_frame,textvariable=copyr,borderwidth=1,bg="#FFFFC4",width=4)
 copyr_label.pack(side=LEFT, expand=TRUE, fill=X)
 copyr_button_change=Button(copyr_frame,text="Canviar",command=lambda: changecopyright(copyr))
 copyr_button_change.pack(side=LEFT)
@@ -330,15 +387,15 @@ data_button=Button(data_frame,text="Data captura",command=window.quit, width=10)
 data_button.pack(side=LEFT)
 data_label=Label(data_frame,text="(dia/mes/any):",anchor=W)
 data_label.pack(side=LEFT)
-dia_label=Label(data_frame,textvariable=dia,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W)
+dia_label=Entry(data_frame,textvariable=dia,borderwidth=1,bg="#FFFFC4",width=2)
 dia_label.pack(side=LEFT, expand=TRUE, fill=X)
 barra_label=Label(data_frame,text="/",anchor=W)
 barra_label.pack(side=LEFT)
-mes_label=Label(data_frame,textvariable=mes,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W)
+mes_label=Entry(data_frame,textvariable=mes,borderwidth=1,bg="#FFFFC4",width=2)
 mes_label.pack(side=LEFT, expand=TRUE, fill=X)
 barra_label=Label(data_frame,text="/",anchor=W)
 barra_label.pack(side=LEFT)
-year_label=Label(data_frame,textvariable=year,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W)
+year_label=Entry(data_frame,textvariable=year,borderwidth=1,bg="#FFFFC4",width=4)
 year_label.pack(side=LEFT, expand=TRUE, fill=X)
 data_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
@@ -361,9 +418,11 @@ body.pack(side=TOP,expand=TRUE,fill=BOTH)
 footer=Frame(window)
 def seleccionarTots():
 	imglist.selection_set(0, imglist.size())
+	show_move_directory()
 
 def deseleccionarTots():
 	imglist.selection_clear(0, imglist.size())
+	hide_move_directory()
 
 close_window=Button(footer,text="Sortir",command=window.quit)
 close_window.pack(side=BOTTOM,anchor=W)
@@ -494,9 +553,8 @@ def getY(metadades):
 def showbutton_selected(event):
 	
 	if imglist.curselection():
-		selected.pack(side=LEFT)
-		mov_directory.pack(side=LEFT)
-
+		show_move_directory()
+		
 		index = imglist.curselection()
 		longitud_llista = len(index)
 		if(longitud == 1):
@@ -517,7 +575,7 @@ def showbutton_selected(event):
 				images = imglist.get(index[i])
 				metadades = pyexiv2.ImageMetadata(images)
 				metadades.read()
-
+				#Carguem la preview de la imatge
 				preview = metadades.previews[0]				
 				preview.write_to_file("//tmp//thumb_temp")
 				imagen = Image.open("//tmp//thumb_temp.jpg")
@@ -606,7 +664,8 @@ def showbutton_selected(event):
 				else:
 					midax.set("-")
 					miday.set("-")
-				#Carguem la preview de la imatge
+	else:
+		hide_move_directory()
 				
 
 imglist.bind('<<ListboxSelect>>', showbutton_selected)
