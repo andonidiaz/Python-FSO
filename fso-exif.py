@@ -35,7 +35,7 @@ import shutil
 import ImageTk
 from PIL import Image
 
-def change_date(d,m,y):
+def change_date(d,m,y,index):
 	
 	day=StringVar()
 	month=StringVar()
@@ -70,10 +70,22 @@ def change_date(d,m,y):
 	barra_label.pack(side=LEFT)
 	new_y=Entry(data_frame,textvariable=year,width=4, bg="#FFFFC4")
 	new_y.pack(side=LEFT, expand=TRUE, fill=X)
-	data_button_change=Button(data_frame,text="Canviar",command=window_date.destroy)
+	data_button_change=Button(data_frame,text="Canviar",command=lambda: canviarData(new_d.get(), new_m.get(), new_y.get(), index))
 	data_button_change.pack(side=LEFT, anchor=E)
 	data_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2, anchor=N)
 	
+
+def canviarData(day, month, year, index):
+	if not(len(index) > 1):
+		metadades = pyexiv2.ImageMetadata(imglist.get(index))
+		metadades.read()
+		novaData = datetime.date(day=int(day), month=int(month), year=int(year))
+		metadades['Exif.Photo.DateTimeOriginal'] = novaData
+		metadades.write()
+		mensaje_ventana("Info", "Operació completada amb exit!")
+		window_date.destroy()
+
+
 def movedirectory():
 		
 	newdir=StringVar()
@@ -96,6 +108,7 @@ def choose_new_dir(window_newdir,newdir,imagenes_copiar):
 	dirname=tkFileDialog.askdirectory()
 	for i in xrange(len(imagenes_copiar)):
 		shutil.copy2(imglist.get(i), dirname)
+	mensaje_ventana("Copia de fitxers", "Fitxers moguts amb éxit!")
 		
 def changecopyright(mycopy):
 		
@@ -381,7 +394,7 @@ copyr_button_change.pack(side=LEFT)
 copyr_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 data_frame=Frame(exif)
-data_button_change=Button(data_frame,text="Canviar data",command=lambda: change_date(dia,mes,year))
+data_button_change=Button(data_frame,text="Canviar data",command=lambda: change_date(dia,mes,year,imglist.curselection()))
 data_button_change.pack(side=BOTTOM, anchor=E)
 data_button=Button(data_frame,text="Data captura",command=window.quit, width=10)
 data_button.pack(side=LEFT)
