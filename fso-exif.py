@@ -82,12 +82,17 @@ def canviarData(day, month, year, index):
 		novaData = datetime.date(day=int(day), month=int(month), year=int(year))
 		metadades['Exif.Photo.DateTimeOriginal'] = novaData
 		metadades.write()
-		mensaje_ventana("Info", "Operació completada amb exit!")
-		window_date.destroy()
+		mensaje_ventana("Canvi de metadades", "Operació completada amb exit!")
+	else:
+		for i in range(len(index)):
+			metadades = pyexiv2.ImageMetadata(imglist.get(index[i]))
+			metadades.read()
+			novaData = datetime.date(day=int(day), month=int(month), year=int(year))
+			metadades['Exif.Photo.DateTimeOriginal'] = novaData
+			metadades.write()
+		mensaje_ventana("Canvi de metadades", "Operació completada amb exit! (Multiples imatges)")
 
-
-def movedirectory():
-		
+def movedirectory():	
 	newdir=StringVar()
 		
 	window_newdir=Toplevel()
@@ -109,8 +114,23 @@ def choose_new_dir(window_newdir,newdir,imagenes_copiar):
 	for i in xrange(len(imagenes_copiar)):
 		shutil.copy2(imglist.get(i), dirname)
 	mensaje_ventana("Copia de fitxers", "Fitxers moguts amb éxit!")
-		
-def changecopyright(mycopy):
+
+def canviar_copy(new_copy,index):
+	if not(len(index) > 1):
+		metadades = pyexiv2.ImageMetadata(imglist.get(index))
+		metadades.read()
+		metadades['Exif.Image.Copyright'] = new_copy
+		metadades.write()
+		mensaje_ventana("Canvi de metadades", "Operació completada amb exit!")
+	else:
+		for i in range(len(index)):
+			metadades = pyexiv2.ImageMetadata(imglist.get(index[i]))
+			metadades.read()
+			metadades['Exif.Image.Copyright'] = new_copy
+			metadades.write()
+		mensaje_ventana("Canvi de metadades", "Operació completada amb exit! (Multiples imatges)")
+
+def changecopyright(mycopy,index):
 		
 	newCopy=StringVar()
 		
@@ -127,9 +147,10 @@ def changecopyright(mycopy):
 	a_label.pack(side=LEFT)
 	new_copy=Entry(newcopy_frame,textvariable=newCopy, width=10)
 	new_copy.pack(side=LEFT,expand=TRUE, fill=X)
-	newcopy_button_change=Button(newcopy_frame,text="Canviar",command=window_copy.destroy)
+	newcopy_button_change=Button(newcopy_frame,text="Canviar",command=lambda: canviar_copy(new_copy.get(), index))
 	newcopy_button_change.pack(side=LEFT, anchor=E)
 	newcopy_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2, anchor=N)
+
 def cleanList():
 	imglist.delete(0,imglist.size())
 	hide_move_directory()
@@ -163,35 +184,13 @@ def show_move_directory():
 	mov_directory.pack(side=LEFT)
 	
 def mensaje_ventana(cabecera, mensaje):
-	
 	tkMessageBox.showinfo(title=cabecera,message=mensaje)
-	
-	"""
-	Hay un ejemplo de funcionamiento de esta función en la linia 177
-	
-	Esto podría ser una alternativa eliminando un parámetro:
-	
-	window_newdir=Toplevel()
-	window_newdir.title("Missatge d'estat")
-	window_newdir.minsize(400, 75)
-	newdir_frame=Frame(window_newdir)
-	newdir_label=Label(newdir_frame,textvariable=mensaje)
-	newdir_label.pack()
-	accept_button=Button(newdir_frame,text="Acceptar",command=window_newdir.destroy)
-	accept_button.pack(side=BOTTOM)
-	newdir_frame.pack(side=TOP,expand=TRUE, fill=X)"""
 	
 #MAIN
 
 window=Tk()
 window.title("Tractament Imatge EXIF")
 window.minsize(750, 475)
-
-"""
-Ejemplo de funcionamiento de la función mensaje_ventana
-cabecera='Hola'
-mensaje='Estoy informando'
-mensaje_ventana(cabecera,mensaje)"""
 
 #HEADER
 
@@ -331,8 +330,21 @@ mes=StringVar()
 
 year=StringVar()
 
+def searchMetadata(clean_list,path,metatype,string):
+	clean_list()
+	global metadades
+	global key
+	if metatype == 0:
+		for root, dirnames, filenames in os.walk(path):
+			for filename in fnmatch.filter(filenames, '*.jpg'):
+				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+				metadades.read()
+				key = getCameraModel(metadades)
+				if string in key:
+					imglist.insert(END, os.path.join(root, filename))
+
 camera_frame=Frame(exif)
-camera_button=Button(camera_frame,text="Càmera:",command=window.quit, width=10)
+camera_button=Button(camera_frame,text="Càmera:",command=lambda: searchMetadata(cleanList,directory.get(),0,camera.get()), width=10)
 camera_button.pack(side=LEFT)
 camera_label=Entry(camera_frame,textvariable=camera,borderwidth=1,bg="#FFFFC4",width=4)
 camera_label.pack(side=LEFT, expand=TRUE, fill=X)
@@ -389,7 +401,7 @@ copyr_button=Button(copyr_frame,text="Copyright:",command=window.quit, width=10)
 copyr_button.pack(side=LEFT)
 copyr_label=Entry(copyr_frame,textvariable=copyr,borderwidth=1,bg="#FFFFC4",width=4)
 copyr_label.pack(side=LEFT, expand=TRUE, fill=X)
-copyr_button_change=Button(copyr_frame,text="Canviar",command=lambda: changecopyright(copyr))
+copyr_button_change=Button(copyr_frame,text="Canviar",command=lambda: changecopyright(copyr,imglist.curselection()))
 copyr_button_change.pack(side=LEFT)
 copyr_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
