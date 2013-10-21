@@ -604,7 +604,18 @@ def showbutton_selected(event):
 				preview = metadades.previews[0]				
 				preview.write_to_file("//tmp//thumb_temp")
 				imagen = Image.open("//tmp//thumb_temp.jpg")
-				imagen = imagen.resize((250,300),Image.ANTIALIAS)
+				
+				maxxsize=250
+				maxysize=300
+				if(getX(metadades)<getY(metadades)):
+					resizex=(maxysize*getX(metadades))/getY(metadades)
+					resizey=maxysize
+					imagen = imagen.resize((resizex,resizey),Image.ANTIALIAS)
+				else:
+					resizey=(maxxsize*getY(metadades))/getX(metadades)
+					resizex=maxxsize
+					imagen = imagen.resize((resizex,resizey),Image.ANTIALIAS)
+					
 				global preview_final
 				preview_final = ImageTk.PhotoImage(imagen)
 				thumb_img.create_image(130,150,image=preview_final)
