@@ -118,8 +118,12 @@ def choose_new_dir(window_newdir,newdir,imagenes_copiar,ventana):
 	window_newdir.destroy()
 	dirname=tkFileDialog.askdirectory()
 	for i in xrange(len(imagenes_copiar)):
-		shutil.copy2(imglist.get(i), dirname)
+		shutil.copy2(imglist.get(imagenes_copiar[i]), dirname)
 	mensaje_ventana("Copia de fitxers", "Fitxers moguts amb éxit!")
+	
+	for i in xrange(len(imagenes_copiar)):
+		imglist.selection_set(imagenes_copiar[i])
+
 	ventana.destroy()
 
 def canviar_copy(new_copy,index,ventana):
@@ -173,6 +177,7 @@ def loadFiles(path):
 def hide_move_directory():
 	selected.pack_forget()
 	mov_directory.pack_forget()
+	img.set("")
 	camera.set("")
 	objectiu.set("")
 	longitud.set("")
@@ -663,7 +668,7 @@ def getY(metadades):
 		return("-")
 
 def downloadDefaultImage():
-	os.system('wget http://imageshack.us/a/img545/6493/4vtd.jpg -O images.jpg')
+	os.system('wget http://enfilo.com/images/image_not_avaliable.jpg -O images.jpg')
 	imagen = Image.open("images.jpg")
 	global imatge_defecte
 	imatge_defecte = ImageTk.PhotoImage(imagen)
