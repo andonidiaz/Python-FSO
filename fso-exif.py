@@ -330,7 +330,7 @@ mes=StringVar()
 
 year=StringVar()
 
-def searchMetadata(clean_list,path,metatype,string):
+def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString=""):
 	clean_list()
 	global metadades
 	global key
@@ -342,6 +342,85 @@ def searchMetadata(clean_list,path,metatype,string):
 				key = getCameraModel(metadades)
 				if string in key:
 					imglist.insert(END, os.path.join(root, filename))
+		camera.set(string)
+	elif metatype == 1:
+		for root, dirnames, filenames in os.walk(path):
+			for filename in fnmatch.filter(filenames, '*.jpg'):
+				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+				metadades.read()
+				key = getLensModel(metadades)
+				if string in key:
+					imglist.insert(END, os.path.join(root, filename))
+		objectiu.set(string)
+	elif metatype == 2:
+		for root, dirnames, filenames in os.walk(path):
+			for filename in fnmatch.filter(filenames, '*.jpg'):
+				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+				metadades.read()
+				key = getFocalLength(metadades)
+				if string in key:
+					imglist.insert(END, os.path.join(root, filename))
+		longitud.set(string)
+	elif metatype == 3:
+		for root, dirnames, filenames in os.walk(path):
+			for filename in fnmatch.filter(filenames, '*.jpg'):
+				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+				metadades.read()
+				key = getExposureTime(metadades)
+				if string in key:
+					imglist.insert(END, os.path.join(root, filename))
+		exposicio.set(string)
+	elif metatype == 4:
+		for root, dirnames, filenames in os.walk(path):
+			for filename in fnmatch.filter(filenames, '*.jpg'):
+				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+				metadades.read()
+				key = getFNumber(metadades)
+				if string in key:
+					imglist.insert(END, os.path.join(root, filename))
+		diafragma.set(string)
+	elif metatype == 5:
+		for root, dirnames, filenames in os.walk(path):
+			for filename in fnmatch.filter(filenames, '*.jpg'):
+				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+				metadades.read()
+				key = getISOSpeedRating(metadades)
+				if string in key:
+					imglist.insert(END, os.path.join(root, filename))
+		iso.set(string)
+	elif metatype == 6:
+		for root, dirnames, filenames in os.walk(path):
+			for filename in fnmatch.filter(filenames, '*.jpg'):
+				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+				metadades.read()
+				key = getX(metadades)
+				key2= getY(metadades)
+				if (string in str(key)) and (secondString in str(key2)):
+					imglist.insert(END, os.path.join(root, filename))
+		midax.set(string)
+		miday.set(secondString)
+	elif metatype == 7:
+		for root, dirnames, filenames in os.walk(path):
+			for filename in fnmatch.filter(filenames, '*.jpg'):
+				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+				metadades.read()
+				key = getCopyright(metadades)
+				if string in key:
+					imglist.insert(END, os.path.join(root, filename))
+		copyr.set(string)
+	elif metatype == 8:
+		for root, dirnames, filenames in os.walk(path):
+			for filename in fnmatch.filter(filenames, '*.jpg'):
+				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+				metadades.read()
+				key = getDay(metadades)
+				key2 = getMonth(metadades)
+				key3 = getYear(metadades)
+				if (string in str(key)) and (secondString in str(key2)) and (thirdString in str(key3)):
+					imglist.insert(END, os.path.join(root, filename))
+		dia.set(string)
+		mes.set(secondString)
+		year.set(thirdString)
 
 camera_frame=Frame(exif)
 camera_button=Button(camera_frame,text="Càmera:",command=lambda: searchMetadata(cleanList,directory.get(),0,camera.get()), width=10)
@@ -351,42 +430,42 @@ camera_label.pack(side=LEFT, expand=TRUE, fill=X)
 camera_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 objectiu_frame=Frame(exif)
-objectiu_button=Button(objectiu_frame,text="Objectiu:",command=window.quit, width=10)
+objectiu_button=Button(objectiu_frame,text="Objectiu:",command=lambda: searchMetadata(cleanList,directory.get(),1,objectiu.get()), width=10)
 objectiu_button.pack(side=LEFT)
 objectiu_label=Entry(objectiu_frame,textvariable=objectiu,borderwidth=1,bg="#FFFFC4",width=4)
 objectiu_label.pack(side=LEFT, expand=TRUE, fill=X)
 objectiu_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 longitud_frame=Frame(exif)
-longitud_button=Button(longitud_frame,text="Longitud Focal:",command=window.quit, width=10)
+longitud_button=Button(longitud_frame,text="Longitud Focal:",command=lambda: searchMetadata(cleanList,directory.get(),2,longitud.get()), width=10)
 longitud_button.pack(side=LEFT)
 longitud_label=Entry(longitud_frame,textvariable=longitud,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",width=4)
 longitud_label.pack(side=LEFT, expand=TRUE, fill=X)
 longitud_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 exposicio_frame=Frame(exif)
-exposicio_button=Button(exposicio_frame,text="Exposició:",command=window.quit, width=10)
+exposicio_button=Button(exposicio_frame,text="Exposició:",command=lambda: searchMetadata(cleanList,directory.get(),3,exposicio.get()), width=10)
 exposicio_button.pack(side=LEFT)
 exposicio_label=Entry(exposicio_frame,textvariable=exposicio,borderwidth=1,bg="#FFFFC4",width=4)
 exposicio_label.pack(side=LEFT, expand=TRUE, fill=X)
 exposicio_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 diafragma_frame=Frame(exif)
-diafragma_button=Button(diafragma_frame,text="Diafragma:",command=window.quit, width=10)
+diafragma_button=Button(diafragma_frame,text="Diafragma:",command=lambda: searchMetadata(cleanList,directory.get(),4,diafragma.get()), width=10)
 diafragma_button.pack(side=LEFT)
 diafragma_label=Entry(diafragma_frame,textvariable=diafragma,borderwidth=1,bg="#FFFFC4",width=4)
 diafragma_label.pack(side=LEFT, expand=TRUE, fill=X)
 diafragma_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 iso_frame=Frame(exif)
-iso_button=Button(iso_frame,text="ISO:",command=window.quit, width=10, pady=5)
+iso_button=Button(iso_frame,text="ISO:",command=lambda: searchMetadata(cleanList,directory.get(),5,iso.get()), width=10, pady=5)
 iso_button.pack(side=LEFT)
 iso_label=Entry(iso_frame,textvariable=iso,borderwidth=1,bg="#FFFFC4",width=4)
 iso_label.pack(side=LEFT, expand=TRUE, fill=X)
 iso_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 mida_frame=Frame(exif)
-mida_button=Button(mida_frame,text="Mida:",command=window.quit, width=10)
+mida_button=Button(mida_frame,text="Mida:",command=lambda: searchMetadata(cleanList,directory.get(),6,str(midax.get()), str(miday.get())), width=10)
 mida_button.pack(side=LEFT)
 midax_label=Entry(mida_frame,textvariable=midax,borderwidth=1,bg="#FFFFC4",width=4)
 midax_label.pack(side=LEFT, expand=TRUE, fill=X)
@@ -397,7 +476,7 @@ miday_label.pack(side=LEFT, expand=TRUE, fill=X)
 mida_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 
 copyr_frame=Frame(exif)
-copyr_button=Button(copyr_frame,text="Copyright:",command=window.quit, width=10)
+copyr_button=Button(copyr_frame,text="Copyright:",command=lambda: searchMetadata(cleanList,directory.get(),7,copyr.get()), width=10)
 copyr_button.pack(side=LEFT)
 copyr_label=Entry(copyr_frame,textvariable=copyr,borderwidth=1,bg="#FFFFC4",width=4)
 copyr_label.pack(side=LEFT, expand=TRUE, fill=X)
@@ -408,7 +487,7 @@ copyr_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2)
 data_frame=Frame(exif)
 data_button_change=Button(data_frame,text="Canviar data",command=lambda: change_date(dia,mes,year,imglist.curselection()))
 data_button_change.pack(side=BOTTOM, anchor=E)
-data_button=Button(data_frame,text="Data captura",command=window.quit, width=10)
+data_button=Button(data_frame,text="Data captura",command=lambda: searchMetadata(cleanList,directory.get(),8,dia.get(), mes.get(), year.get()), width=10)
 data_button.pack(side=LEFT)
 data_label=Label(data_frame,text="(dia/mes/any):",anchor=W)
 data_label.pack(side=LEFT)
