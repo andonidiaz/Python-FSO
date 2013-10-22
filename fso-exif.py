@@ -1,26 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#fso-exif.py
+# fso-exif.py
 #
-#Copyright 2013 
-#Marc Ruiz <marc.ruiz@estudiants.urv.cat> 
-#Andoni Diaz <andoni.diaz@estudiants.urv.cat>
+# Copyright 2013 
+# Marc Ruiz <marc.ruiz@estudiants.urv.cat> 
+# Andoni Diaz <andoni.diaz@estudiants.urv.cat>
+# 
+# Url-repo: https://github.com/Debci/Python-FSO
 #
-#This program is free software; you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation; either version 2 of the License, or
-#(at your option) any later version.
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
 #
-#This program is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-#GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+# GNU General Public License for more details.
 #
-#You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#MA 02110-1301, USA.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
 #
 #
 
@@ -70,27 +72,31 @@ def change_date(d,m,y,index):
 	barra_label.pack(side=LEFT)
 	new_y=Entry(data_frame,textvariable=year,width=4, bg="#FFFFC4")
 	new_y.pack(side=LEFT, expand=TRUE, fill=X)
-	data_button_change=Button(data_frame,text="Canviar",command=lambda: canviarData(new_d.get(), new_m.get(), new_y.get(), index))
+	data_button_change=Button(data_frame,text="Canviar",command=lambda: canviarData(new_d.get(), new_m.get(), new_y.get(), index,window_date))
 	data_button_change.pack(side=LEFT, anchor=E)
 	data_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2, anchor=N)
 	
 
-def canviarData(day, month, year, index):
+def canviarData(day, month, year2, index,ventana):
 	if not(len(index) > 1):
 		metadades = pyexiv2.ImageMetadata(imglist.get(index))
 		metadades.read()
-		novaData = datetime.date(day=int(day), month=int(month), year=int(year))
+		novaData = datetime.date(day=int(day), month=int(month), year=int(year2))
 		metadades['Exif.Photo.DateTimeOriginal'] = novaData
 		metadades.write()
-		mensaje_ventana("Canvi de metadades", "Operació completada amb exit!")
+		mensaje_ventana("Canvi de data", "Operació completada amb exit!")
 	else:
 		for i in range(len(index)):
 			metadades = pyexiv2.ImageMetadata(imglist.get(index[i]))
 			metadades.read()
-			novaData = datetime.date(day=int(day), month=int(month), year=int(year))
+			novaData = datetime.date(day=int(day), month=int(month), year=int(year2))
 			metadades['Exif.Photo.DateTimeOriginal'] = novaData
 			metadades.write()
-		mensaje_ventana("Canvi de metadades", "Operació completada amb exit! (Multiples imatges)")
+		mensaje_ventana("Canvi de data", "Operació completada amb exit! (Multiples imatges)")
+	dia.set(day)
+	mes.set(month)
+	year.set(year2)
+	ventana.destroy()
 
 def movedirectory():	
 	newdir=StringVar()
@@ -104,32 +110,34 @@ def movedirectory():
 	newdir_label.pack(side=LEFT)
 	new_dir=Entry(newdir_frame,textvariable=newdir, width=20)
 	new_dir.pack(side=LEFT, expand=TRUE, fill=X)
-	newdir_button_change=Button(newdir_frame,text="Crear",command=lambda: choose_new_dir(window_newdir,newdir,imagenes_copiar))
+	newdir_button_change=Button(newdir_frame,text="Crear",command=lambda: choose_new_dir(window_newdir,newdir,imagenes_copiar,window_newdir))
 	newdir_button_change.pack(side=LEFT, anchor=E)
 	newdir_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2, anchor=N)
 		
-def choose_new_dir(window_newdir,newdir,imagenes_copiar):
+def choose_new_dir(window_newdir,newdir,imagenes_copiar,ventana):
 	window_newdir.destroy()
 	dirname=tkFileDialog.askdirectory()
 	for i in xrange(len(imagenes_copiar)):
 		shutil.copy2(imglist.get(i), dirname)
 	mensaje_ventana("Copia de fitxers", "Fitxers moguts amb éxit!")
+	ventana.destroy()
 
-def canviar_copy(new_copy,index):
+def canviar_copy(new_copy,index,ventana):
 	if not(len(index) > 1):
 		metadades = pyexiv2.ImageMetadata(imglist.get(index))
 		metadades.read()
 		metadades['Exif.Image.Copyright'] = new_copy
 		metadades.write()
-		mensaje_ventana("Canvi de metadades", "Operació completada amb exit!")
+		mensaje_ventana("Canvi de copyright", "Operació completada amb exit!")
 	else:
 		for i in range(len(index)):
 			metadades = pyexiv2.ImageMetadata(imglist.get(index[i]))
 			metadades.read()
 			metadades['Exif.Image.Copyright'] = new_copy
 			metadades.write()
-		mensaje_ventana("Canvi de metadades", "Operació completada amb exit! (Multiples imatges)")
-
+		mensaje_ventana("Canvi de copyright", "Operació completada amb exit! (Multiples imatges)")
+	copyr.set(new_copy)
+	ventana.destroy()
 def changecopyright(mycopy,index):
 		
 	newCopy=StringVar()
@@ -147,7 +155,7 @@ def changecopyright(mycopy,index):
 	a_label.pack(side=LEFT)
 	new_copy=Entry(newcopy_frame,textvariable=newCopy, width=10)
 	new_copy.pack(side=LEFT,expand=TRUE, fill=X)
-	newcopy_button_change=Button(newcopy_frame,text="Canviar",command=lambda: canviar_copy(new_copy.get(), index))
+	newcopy_button_change=Button(newcopy_frame,text="Canviar",command=lambda: canviar_copy(new_copy.get(), index, window_copy))
 	newcopy_button_change.pack(side=LEFT, anchor=E)
 	newcopy_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2, anchor=N)
 
@@ -804,6 +812,5 @@ def showbutton_selected(event):
 	else:
 		hide_move_directory()
 				
-
 imglist.bind('<<ListboxSelect>>', showbutton_selected)
 window.mainloop()
