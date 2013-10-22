@@ -575,6 +575,12 @@ def getY(metadades):
 	except KeyError:
 		return("-")
 
+def downloadDefaultImage():
+	os.system('wget http://imageshack.us/a/img545/6493/4vtd.jpg -O images.jpg')
+	imagen = Image.open("images.jpg")
+	global imatge_defecte
+	imatge_defecte = ImageTk.PhotoImage(imagen)
+
 def showbutton_selected(event):
 	
 	if imglist.curselection():
@@ -582,22 +588,12 @@ def showbutton_selected(event):
 		
 		index = imglist.curselection()
 		longitud_llista = len(index)
-		if(longitud == 1):
+		if(longitud_llista == 1):
+			thumb_img.delete("all")
 			if not(index==""):
 				images = imglist.get(index)
 				img.set(images)
 				loadMetadata(images)
-			else:
-				selected.pack_forget()
-				mov_directory.pack_forget()
-		else:
-			# Comprovamos el primer metadato
-			images = imglist.get(index[0])
-			metadades_primera = pyexiv2.ImageMetadata(images)
-			metadades_primera.read()
-			contador = [0 for x in range(13)]
-			for i in range(longitud_llista):
-				images = imglist.get(index[i])
 				metadades = pyexiv2.ImageMetadata(images)
 				metadades.read()
 				#Carguem la preview de la imatge
@@ -620,6 +616,32 @@ def showbutton_selected(event):
 				preview_final = ImageTk.PhotoImage(imagen)
 				thumb_img.create_image(130,150,image=preview_final)
 				thumb_img.pack()
+			else:
+				selected.pack_forget()
+				mov_directory.pack_forget()
+		else:
+			img.set("")
+			# Comprovamos el primer metadato
+			if not(os.path.exists("images.jpg")):
+				downloadDefaultImage()
+			else:
+				imagen = Image.open("images.jpg")
+				global imatge_defecte
+				imatge_defecte = ImageTk.PhotoImage(imagen)
+
+			thumb_img.delete("all")
+			thumb_img.create_image(130,150,image=imatge_defecte)
+			thumb_img.pack()
+			
+			images = imglist.get(index[0])
+			metadades_primera = pyexiv2.ImageMetadata(images)
+			metadades_primera.read()
+			contador = [0 for x in range(13)]
+			for i in range(longitud_llista):
+				images = imglist.get(index[i])
+				metadades = pyexiv2.ImageMetadata(images)
+				metadades.read()
+			
 				# Camera comú
 				if (getCameraModel(metadades_primera) == getCameraModel(metadades)):
 					i = longitud_llista
