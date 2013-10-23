@@ -372,7 +372,7 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 	clean_list()
 	global metadades
 	global key
-	if (string!=""):
+	if (string!="" or secondString!="" or thirdString!=""):
 		if metatype == 0:
 			for root, dirnames, filenames in os.walk(path):
 				for filename in fnmatch.filter(filenames, '*.jpg'):
@@ -464,7 +464,7 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 					key2 = getMonth(metadades)
 					key3 = getYear(metadades)
 					complete_path = os.path.join(root, filename)
-					if (string in str(key)) and (secondString in str(key2)) and (thirdString in str(key3)):
+					if (string in str(key)) and (secondString in str(key2)) and (thirdString in str(key3)): 
 			        		imglist.insert(END, complete_path[len(path):])
 			dia.set(string)
 			mes.set(secondString)
@@ -722,7 +722,7 @@ def showbutton_selected(event):
 			thumb_img.delete("all")
 			if not(index==""):
 				images = getFullPath(index)
-				img.set(images)
+				img.set(imglist.get(index))
 				loadMetadata(images)
 				metadades = pyexiv2.ImageMetadata(images)
 				metadades.read()
