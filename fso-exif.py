@@ -110,20 +110,31 @@ def movedirectory():
 	newdir_label.pack(side=LEFT)
 	new_dir=Entry(newdir_frame,textvariable=newdir, width=20)
 	new_dir.pack(side=LEFT, expand=TRUE, fill=X)
-	newdir_button_change=Button(newdir_frame,text="Crear",command=lambda: choose_new_dir(window_newdir,newdir,imagenes_copiar,window_newdir))
+	newdir_button_change=Button(newdir_frame,text="Crear",command=lambda: choose_new_dir(window_newdir,newdir.get(),imagenes_copiar,window_newdir))
 	newdir_button_change.pack(side=LEFT, anchor=E)
 	newdir_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2, anchor=N)
 		
 def choose_new_dir(window_newdir,newdir,imagenes_copiar,ventana):
 	window_newdir.destroy()
-	dirname=tkFileDialog.askdirectory()
-	for i in xrange(len(imagenes_copiar)):
-		shutil.copy2(imglist.get(imagenes_copiar[i]), dirname)
-	mensaje_ventana("Copia de fitxers", "Fitxers moguts amb éxit!")
 	
-	for i in xrange(len(imagenes_copiar)):
-		imglist.selection_set(imagenes_copiar[i])
+	dirname=tkFileDialog.askdirectory()
 
+	if not(dirname == ''):
+		if not(newdir == ''):
+			if not os.path.isdir(dirname + '/' + newdir):
+		   		os.makedirs(dirname + '/' + newdir)
+		   	else:
+		   		mensaje_ventana("Avís!", "El directori a crear ja existeix. Es copiaran igualment.")
+		else:
+			mensaje_ventana("Avís!", "No es crearà un nou directory.")
+		for i in xrange(len(imagenes_copiar)):
+			shutil.copy2(imglist.get(imagenes_copiar[i]), dirname + '/' + newdir)
+		mensaje_ventana("Copia de fitxers", "Fitxers moguts amb éxit!")
+		
+		for i in xrange(len(imagenes_copiar)):
+			imglist.selection_set(imagenes_copiar[i])
+	else:
+		mensaje_ventana("Operacio cancelada", "No es copiaran els fitxers.")
 	ventana.destroy()
 
 def canviar_copy(new_copy,index,ventana):
@@ -689,25 +700,41 @@ def showbutton_selected(event):
 				metadades = pyexiv2.ImageMetadata(images)
 				metadades.read()
 				#Carguem la preview de la imatge
-				preview = metadades.previews[0]				
-				preview.write_to_file("//tmp//thumb_temp")
-				imagen = Image.open("//tmp//thumb_temp.jpg")
+				global imatge_notrobada
+				if not(len(metadades.previews) > 0):
 				
-				maxxsize=250
-				maxysize=300
-				if(getX(metadades)<getY(metadades)):
-					resizex=(maxysize*getX(metadades))/getY(metadades)
-					resizey=maxysize
-					imagen = imagen.resize((resizex,resizey),Image.ANTIALIAS)
+					if not(os.path.exists("images.jpg")):
+						downloadDefaultImage()
+						imagen = Image.open("images.jpg")
+						imatge_notrobada = ImageTk.PhotoImage(imagen)
+					else:
+						imagen = Image.open("images.jpg")
+						imatge_notrobada = ImageTk.PhotoImage(imagen)
+
+					thumb_img.delete("all")
+					thumb_img.create_image(130,150,image=imatge_notrobada)
+					thumb_img.pack()
 				else:
-					resizey=(maxxsize*getY(metadades))/getX(metadades)
-					resizex=maxxsize
-					imagen = imagen.resize((resizex,resizey),Image.ANTIALIAS)
+					preview = metadades.previews[0]
+					preview.write_to_file("//tmp//thumb_temp")
+					imagen = Image.open("//tmp//thumb_temp.jpg")
 					
-				global preview_final
-				preview_final = ImageTk.PhotoImage(imagen)
-				thumb_img.create_image(130,150,image=preview_final)
-				thumb_img.pack()
+					maxxsize=250
+					maxysize=300
+					if(getX(metadades)<getY(metadades)):
+						resizex=(maxysize*getX(metadades))/getY(metadades)
+						resizey=maxysize
+						imagen = imagen.resize((resizex,resizey),Image.ANTIALIAS)
+					else:
+						resizey=(maxxsize*getY(metadades))/getX(metadades)
+						resizex=maxxsize
+						imagen = imagen.resize((resizex,resizey),Image.ANTIALIAS)
+						
+					global preview_final
+					preview_final = ImageTk.PhotoImage(imagen)
+					thumb_img.create_image(130,150,image=preview_final)
+					thumb_img.pack()
+				
 			else:
 				selected.pack_forget()
 				mov_directory.pack_forget()
