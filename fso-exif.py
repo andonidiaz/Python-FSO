@@ -81,7 +81,7 @@ def change_date(d,m,y,index):
 
 def canviarData(day, month, year2, index,ventana):
 	if not(len(index) > 1):
-		metadades = pyexiv2.ImageMetadata(imglist.get(index))
+		metadades = pyexiv2.ImageMetadata(getFullPath(index))
 		metadades.read()
 		novaData = datetime.date(day=int(day), month=int(month), year=int(year2))
 		metadades['Exif.Photo.DateTimeOriginal'] = novaData
@@ -89,7 +89,7 @@ def canviarData(day, month, year2, index,ventana):
 		mensaje_ventana("Canvi de data", "Operació completada amb exit!")
 	else:
 		for i in range(len(index)):
-			metadades = pyexiv2.ImageMetadata(imglist.get(index[i]))
+			metadades = pyexiv2.ImageMetadata(getFullPath(index[i]))
 			metadades.read()
 			novaData = datetime.date(day=int(day), month=int(month), year=int(year2))
 			metadades['Exif.Photo.DateTimeOriginal'] = novaData
@@ -120,7 +120,6 @@ def movedirectory():
 		
 def choose_new_dir(window_newdir,newdir,imagenes_copiar,ventana):
 	window_newdir.destroy()
-	
 	dirname=tkFileDialog.askdirectory()
 
 	if not(dirname == ''):
@@ -132,7 +131,7 @@ def choose_new_dir(window_newdir,newdir,imagenes_copiar,ventana):
 		else:
 			mensaje_ventana("Avís!", "No es crearà un nou directory.")
 		for i in xrange(len(imagenes_copiar)):
-			shutil.copy2(imglist.get(imagenes_copiar[i]), dirname + '/' + newdir)
+			shutil.copy2(getFullPath(imagenes_copiar[i]), dirname + '/' + newdir)
 		mensaje_ventana("Copia de fitxers", "Fitxers moguts amb éxit!")
 		
 		for i in xrange(len(imagenes_copiar)):
@@ -143,14 +142,14 @@ def choose_new_dir(window_newdir,newdir,imagenes_copiar,ventana):
 
 def canviar_copy(new_copy,index,ventana):
 	if not(len(index) > 1):
-		metadades = pyexiv2.ImageMetadata(imglist.get(index))
+		metadades = pyexiv2.ImageMetadata(getFullPath(index))
 		metadades.read()
 		metadades['Exif.Image.Copyright'] = new_copy
 		metadades.write()
 		mensaje_ventana("Canvi de copyright", "Operació completada amb exit!")
 	else:
 		for i in range(len(index)):
-			metadades = pyexiv2.ImageMetadata(imglist.get(index[i]))
+			metadades = pyexiv2.ImageMetadata(getFullPath(index[i]))
 			metadades.read()
 			metadades['Exif.Image.Copyright'] = new_copy
 			metadades.write()
@@ -192,9 +191,12 @@ def loadFiles(path):
 	cleanList()
 	for root, dirnames, filenames in os.walk(path):
 		for filename in fnmatch.filter(filenames, '*.jpg'):
-			#Ruta entera: os.path.join(root, filename)
-			imglist.insert(END, os.path.join(root, filename))
-	
+			complete_path = os.path.join(root, filename)
+			imglist.insert(END, complete_path[len(path):])
+
+def getFullPath(index):
+	return directory.get() + imglist.get(index)
+
 def hide_move_directory():
 	selected.pack_forget()
 	mov_directory.pack_forget()
@@ -710,7 +712,7 @@ def showbutton_selected(event):
 		if(longitud_llista == 1):
 			thumb_img.delete("all")
 			if not(index==""):
-				images = imglist.get(index)
+				images = getFullPath(index)
 				img.set(images)
 				loadMetadata(images)
 				metadades = pyexiv2.ImageMetadata(images)
@@ -768,12 +770,12 @@ def showbutton_selected(event):
 			thumb_img.create_image(130,150,image=imatge_defecte)
 			thumb_img.pack()
 			
-			images = imglist.get(index[0])
+			images = getFullPath(index[0])
 			metadades_primera = pyexiv2.ImageMetadata(images)
 			metadades_primera.read()
 			contador = [0 for x in range(13)]
 			for i in range(longitud_llista):
-				images = imglist.get(index[i])
+				images = getFullPath(index[i])
 				metadades = pyexiv2.ImageMetadata(images)
 				metadades.read()
 			
