@@ -379,8 +379,9 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
 					metadades.read()
 					key = getCameraModel(metadades)
-					if string in key:
-						imglist.insert(END, os.path.join(root, filename))
+					if str(string) in str(key):
+						complete_path = os.path.join(root, filename)
+						imglist.insert(END, complete_path[len(path):])
 			camera.set(string)
 		elif metatype == 1:
 			for root, dirnames, filenames in os.walk(path):
@@ -388,8 +389,9 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
 					metadades.read()
 					key = getLensModel(metadades)
-					if string in key:
-						imglist.insert(END, os.path.join(root, filename))
+					if str(string) in str(key):
+						complete_path = os.path.join(root, filename)
+						imglist.insert(END, complete_path[len(path):])
 			objectiu.set(string)
 		elif metatype == 2:
 			for root, dirnames, filenames in os.walk(path):
@@ -397,8 +399,9 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
 					metadades.read()
 					key = getFocalLength(metadades)
-					if string in key:
-						imglist.insert(END, os.path.join(root, filename))
+					if str(string) in str(key):
+						complete_path = os.path.join(root, filename)
+						imglist.insert(END, complete_path[len(path):])
 			longitud.set(string)
 		elif metatype == 3:
 			for root, dirnames, filenames in os.walk(path):
@@ -406,8 +409,9 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
 					metadades.read()
 					key = getExposureTime(metadades)
-					if string in key:
-						imglist.insert(END, os.path.join(root, filename))
+					complete_path = os.path.join(root, filename)
+					if str(string) in str(key):
+			        		imglist.insert(END, complete_path[len(path):])
 			exposicio.set(string)
 		elif metatype == 4:
 			for root, dirnames, filenames in os.walk(path):
@@ -415,8 +419,9 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
 					metadades.read()
 					key = getFNumber(metadades)
-					if string in key:
-						imglist.insert(END, os.path.join(root, filename))
+					complete_path = os.path.join(root, filename)
+					if str(string) in str(key):
+			       			imglist.insert(END, complete_path[len(path):])
 			diafragma.set(string)
 		elif metatype == 5:
 			for root, dirnames, filenames in os.walk(path):
@@ -424,8 +429,9 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
 					metadades.read()
 					key = getISOSpeedRating(metadades)
-					if string in key:
-						imglist.insert(END, os.path.join(root, filename))
+					complete_path = os.path.join(root, filename)
+					if str(string) in str(key):
+			        		imglist.insert(END, complete_path[len(path):])
 			iso.set(string)
 		elif metatype == 6:
 			for root, dirnames, filenames in os.walk(path):
@@ -434,8 +440,9 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 					metadades.read()
 					key = getX(metadades)
 					key2= getY(metadades)
+					complete_path = os.path.join(root, filename)
 					if (string in str(key)) and (secondString in str(key2)):
-						imglist.insert(END, os.path.join(root, filename))
+			        		imglist.insert(END, complete_path[len(path):])
 			midax.set(string)
 			miday.set(secondString)
 		elif metatype == 7:
@@ -444,8 +451,9 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
 					metadades.read()
 					key = getCopyright(metadades)
-					if string in key:
-						imglist.insert(END, os.path.join(root, filename))
+					complete_path = os.path.join(root, filename)
+					if str(string) in str(key):
+			        		imglist.insert(END, complete_path[len(path):])
 			copyr.set(string)
 		elif metatype == 8:
 			for root, dirnames, filenames in os.walk(path):
@@ -455,8 +463,9 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 					key = getDay(metadades)
 					key2 = getMonth(metadades)
 					key3 = getYear(metadades)
+					complete_path = os.path.join(root, filename)
 					if (string in str(key)) and (secondString in str(key2)) and (thirdString in str(key3)):
-						imglist.insert(END, os.path.join(root, filename))
+			        		imglist.insert(END, complete_path[len(path):])
 			dia.set(string)
 			mes.set(secondString)
 			year.set(thirdString)
