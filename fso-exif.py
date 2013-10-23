@@ -39,43 +39,45 @@ from PIL import Image
 
 def change_date(d,m,y,index):
 	
-	day=StringVar()
-	month=StringVar()
-	year=StringVar()
+	if (len(index)!=0):
+		day=StringVar()
+		month=StringVar()
+		year=StringVar()
 		
-	window_date=Toplevel()
-	window_date.title("Canvi Data Captura")
-	window_date.focus_set()
-	imglist=Listbox(images_list,yscrollcommand=scrollist.set,selectmode='multiple')
-	data_frame=Frame(window_date)
-	data_label=Label(data_frame,text="Data captura (dia/mes/any):",anchor=W)
-	data_label.pack(side=LEFT)
-	dia_label=Label(data_frame,textvariable=d,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W, width=2)
-	dia_label.pack(side=LEFT, expand=TRUE, fill=X)
-	barra_label=Label(data_frame,text="/",anchor=W)
-	barra_label.pack(side=LEFT)
-	mes_label=Label(data_frame,textvariable=m,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W, width=2)
-	mes_label.pack(side=LEFT, expand=TRUE, fill=X)
-	barra_label=Label(data_frame,text="/",anchor=W)
-	barra_label.pack(side=LEFT)
-	year_label=Label(data_frame,textvariable=y,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W, width=4)
-	year_label.pack(side=LEFT, expand=TRUE, fill=X)
-	a_label=Label(data_frame,text="a ",anchor=W)
-	a_label.pack(side=LEFT)
-	new_d=Entry(data_frame,textvariable=day, width=2, bg="#FFFFC4")
-	new_d.pack(side=LEFT, expand=TRUE, fill=X)
-	barra_label=Label(data_frame,text="/",anchor=W)
-	barra_label.pack(side=LEFT)
-	new_m=Entry(data_frame,textvariable=month,width=2, bg="#FFFFC4")
-	new_m.pack(side=LEFT,expand=TRUE, fill=X)
-	barra_label=Label(data_frame,text="/",anchor=W)
-	barra_label.pack(side=LEFT)
-	new_y=Entry(data_frame,textvariable=year,width=4, bg="#FFFFC4")
-	new_y.pack(side=LEFT, expand=TRUE, fill=X)
-	data_button_change=Button(data_frame,text="Canviar",command=lambda: canviarData(new_d.get(), new_m.get(), new_y.get(), index,window_date))
-	data_button_change.pack(side=LEFT, anchor=E)
-	data_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2, anchor=N)
-	
+		window_date=Toplevel()
+		window_date.title("Canvi Data Captura")
+		window_date.focus_set()
+		imglist=Listbox(images_list,yscrollcommand=scrollist.set,selectmode='multiple')
+		data_frame=Frame(window_date)
+		data_label=Label(data_frame,text="Data captura (dia/mes/any):",anchor=W)
+		data_label.pack(side=LEFT)
+		dia_label=Label(data_frame,textvariable=d,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W, width=2)
+		dia_label.pack(side=LEFT, expand=TRUE, fill=X)
+		barra_label=Label(data_frame,text="/",anchor=W)
+		barra_label.pack(side=LEFT)
+		mes_label=Label(data_frame,textvariable=m,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W, width=2)
+		mes_label.pack(side=LEFT, expand=TRUE, fill=X)
+		barra_label=Label(data_frame,text="/",anchor=W)
+		barra_label.pack(side=LEFT)
+		year_label=Label(data_frame,textvariable=y,borderwidth=1,relief=SUNKEN,bg="#FFFFC4",anchor=W, width=4)
+		year_label.pack(side=LEFT, expand=TRUE, fill=X)
+		a_label=Label(data_frame,text="a ",anchor=W)
+		a_label.pack(side=LEFT)
+		new_d=Entry(data_frame,textvariable=day, width=2, bg="#FFFFC4")
+		new_d.pack(side=LEFT, expand=TRUE, fill=X)
+		barra_label=Label(data_frame,text="/",anchor=W)
+		barra_label.pack(side=LEFT)
+		new_m=Entry(data_frame,textvariable=month,width=2, bg="#FFFFC4")
+		new_m.pack(side=LEFT,expand=TRUE, fill=X)
+		barra_label=Label(data_frame,text="/",anchor=W)
+		barra_label.pack(side=LEFT)
+		new_y=Entry(data_frame,textvariable=year,width=4, bg="#FFFFC4")
+		new_y.pack(side=LEFT, expand=TRUE, fill=X)
+		data_button_change=Button(data_frame,text="Canviar",command=lambda: canviarData(new_d.get(), new_m.get(), new_y.get(), index,window_date))
+		data_button_change.pack(side=LEFT, anchor=E)
+		data_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2, anchor=N)
+	else:
+		mensaje_ventana("Alerta", "Selecciona com a mínim una imatge")
 
 def canviarData(day, month, year2, index,ventana):
 	if not(len(index) > 1):
@@ -96,6 +98,8 @@ def canviarData(day, month, year2, index,ventana):
 	dia.set(day)
 	mes.set(month)
 	year.set(year2)
+	for i in range(len(index)):
+		imglist.selection_set(index[i])
 	ventana.destroy()
 
 def movedirectory():	
@@ -152,27 +156,33 @@ def canviar_copy(new_copy,index,ventana):
 			metadades.write()
 		mensaje_ventana("Canvi de copyright", "Operació completada amb exit! (Multiples imatges)")
 	copyr.set(new_copy)
+	for i in range(len(index)):
+		imglist.selection_set(index[i])
 	ventana.destroy()
-def changecopyright(mycopy,index):
-		
-	newCopy=StringVar()
-		
-	window_copy=Toplevel()
-	window_copy.title("Canvi Copyright")
-	window_copy.focus_set()
 	
-	newcopy_frame=Frame(window_copy)
-	newcopy_label=Label(newcopy_frame,text="Modifica Copyright:",anchor=W)
-	newcopy_label.pack(side=LEFT)
-	copy_label=Label(newcopy_frame,textvariable=mycopy,anchor=W, width=10, borderwidth=1,relief=SUNKEN,bg="#FFFFFF")
-	copy_label.pack(side=LEFT, expand=TRUE, fill=X)
-	a_label=Label(newcopy_frame,text="a: ",anchor=W)
-	a_label.pack(side=LEFT)
-	new_copy=Entry(newcopy_frame,textvariable=newCopy, width=10)
-	new_copy.pack(side=LEFT,expand=TRUE, fill=X)
-	newcopy_button_change=Button(newcopy_frame,text="Canviar",command=lambda: canviar_copy(new_copy.get(), index, window_copy))
-	newcopy_button_change.pack(side=LEFT, anchor=E)
-	newcopy_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2, anchor=N)
+def changecopyright(mycopy,index):
+	
+	if(len(index)!=0):	
+		newCopy=StringVar()
+		
+		window_copy=Toplevel()
+		window_copy.title("Canvi Copyright")
+		window_copy.focus_set()
+		
+		newcopy_frame=Frame(window_copy)
+		newcopy_label=Label(newcopy_frame,text="Modifica Copyright:",anchor=W)
+		newcopy_label.pack(side=LEFT)
+		copy_label=Label(newcopy_frame,textvariable=mycopy,anchor=W, width=10, borderwidth=1,relief=SUNKEN,bg="#FFFFFF")
+		copy_label.pack(side=LEFT, expand=TRUE, fill=X)
+		a_label=Label(newcopy_frame,text="a: ",anchor=W)
+		a_label.pack(side=LEFT)
+		new_copy=Entry(newcopy_frame,textvariable=newCopy, width=10)
+		new_copy.pack(side=LEFT,expand=TRUE, fill=X)
+		newcopy_button_change=Button(newcopy_frame,text="Canviar",command=lambda: canviar_copy(new_copy.get(), index, window_copy))
+		newcopy_button_change.pack(side=LEFT, anchor=E)
+		newcopy_frame.pack(side=TOP,expand=TRUE, fill=X, padx=10, pady=2, anchor=N)
+	else:
+		mensaje_ventana("Alerta", "Selecciona com a mínim una imatge")
 
 def cleanList():
 	imglist.delete(0,imglist.size())
@@ -358,93 +368,96 @@ def searchMetadata(clean_list,path,metatype,string,secondString="",thirdString="
 	clean_list()
 	global metadades
 	global key
-	if metatype == 0:
-		for root, dirnames, filenames in os.walk(path):
-			for filename in fnmatch.filter(filenames, '*.jpg'):
-				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
-				metadades.read()
-				key = getCameraModel(metadades)
-				if string in key:
-					imglist.insert(END, os.path.join(root, filename))
-		camera.set(string)
-	elif metatype == 1:
-		for root, dirnames, filenames in os.walk(path):
-			for filename in fnmatch.filter(filenames, '*.jpg'):
-				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
-				metadades.read()
-				key = getLensModel(metadades)
-				if string in key:
-					imglist.insert(END, os.path.join(root, filename))
-		objectiu.set(string)
-	elif metatype == 2:
-		for root, dirnames, filenames in os.walk(path):
-			for filename in fnmatch.filter(filenames, '*.jpg'):
-				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
-				metadades.read()
-				key = getFocalLength(metadades)
-				if string in key:
-					imglist.insert(END, os.path.join(root, filename))
-		longitud.set(string)
-	elif metatype == 3:
-		for root, dirnames, filenames in os.walk(path):
-			for filename in fnmatch.filter(filenames, '*.jpg'):
-				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
-				metadades.read()
-				key = getExposureTime(metadades)
-				if string in key:
-					imglist.insert(END, os.path.join(root, filename))
-		exposicio.set(string)
-	elif metatype == 4:
-		for root, dirnames, filenames in os.walk(path):
-			for filename in fnmatch.filter(filenames, '*.jpg'):
-				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
-				metadades.read()
-				key = getFNumber(metadades)
-				if string in key:
-					imglist.insert(END, os.path.join(root, filename))
-		diafragma.set(string)
-	elif metatype == 5:
-		for root, dirnames, filenames in os.walk(path):
-			for filename in fnmatch.filter(filenames, '*.jpg'):
-				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
-				metadades.read()
-				key = getISOSpeedRating(metadades)
-				if string in key:
-					imglist.insert(END, os.path.join(root, filename))
-		iso.set(string)
-	elif metatype == 6:
-		for root, dirnames, filenames in os.walk(path):
-			for filename in fnmatch.filter(filenames, '*.jpg'):
-				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
-				metadades.read()
-				key = getX(metadades)
-				key2= getY(metadades)
-				if (string in str(key)) and (secondString in str(key2)):
-					imglist.insert(END, os.path.join(root, filename))
-		midax.set(string)
-		miday.set(secondString)
-	elif metatype == 7:
-		for root, dirnames, filenames in os.walk(path):
-			for filename in fnmatch.filter(filenames, '*.jpg'):
-				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
-				metadades.read()
-				key = getCopyright(metadades)
-				if string in key:
-					imglist.insert(END, os.path.join(root, filename))
-		copyr.set(string)
-	elif metatype == 8:
-		for root, dirnames, filenames in os.walk(path):
-			for filename in fnmatch.filter(filenames, '*.jpg'):
-				metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
-				metadades.read()
-				key = getDay(metadades)
-				key2 = getMonth(metadades)
-				key3 = getYear(metadades)
-				if (string in str(key)) and (secondString in str(key2)) and (thirdString in str(key3)):
-					imglist.insert(END, os.path.join(root, filename))
-		dia.set(string)
-		mes.set(secondString)
-		year.set(thirdString)
+	if (string!=""):
+		if metatype == 0:
+			for root, dirnames, filenames in os.walk(path):
+				for filename in fnmatch.filter(filenames, '*.jpg'):
+					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+					metadades.read()
+					key = getCameraModel(metadades)
+					if string in key:
+						imglist.insert(END, os.path.join(root, filename))
+			camera.set(string)
+		elif metatype == 1:
+			for root, dirnames, filenames in os.walk(path):
+				for filename in fnmatch.filter(filenames, '*.jpg'):
+					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+					metadades.read()
+					key = getLensModel(metadades)
+					if string in key:
+						imglist.insert(END, os.path.join(root, filename))
+			objectiu.set(string)
+		elif metatype == 2:
+			for root, dirnames, filenames in os.walk(path):
+				for filename in fnmatch.filter(filenames, '*.jpg'):
+					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+					metadades.read()
+					key = getFocalLength(metadades)
+					if string in key:
+						imglist.insert(END, os.path.join(root, filename))
+			longitud.set(string)
+		elif metatype == 3:
+			for root, dirnames, filenames in os.walk(path):
+				for filename in fnmatch.filter(filenames, '*.jpg'):
+					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+					metadades.read()
+					key = getExposureTime(metadades)
+					if string in key:
+						imglist.insert(END, os.path.join(root, filename))
+			exposicio.set(string)
+		elif metatype == 4:
+			for root, dirnames, filenames in os.walk(path):
+				for filename in fnmatch.filter(filenames, '*.jpg'):
+					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+					metadades.read()
+					key = getFNumber(metadades)
+					if string in key:
+						imglist.insert(END, os.path.join(root, filename))
+			diafragma.set(string)
+		elif metatype == 5:
+			for root, dirnames, filenames in os.walk(path):
+				for filename in fnmatch.filter(filenames, '*.jpg'):
+					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+					metadades.read()
+					key = getISOSpeedRating(metadades)
+					if string in key:
+						imglist.insert(END, os.path.join(root, filename))
+			iso.set(string)
+		elif metatype == 6:
+			for root, dirnames, filenames in os.walk(path):
+				for filename in fnmatch.filter(filenames, '*.jpg'):
+					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+					metadades.read()
+					key = getX(metadades)
+					key2= getY(metadades)
+					if (string in str(key)) and (secondString in str(key2)):
+						imglist.insert(END, os.path.join(root, filename))
+			midax.set(string)
+			miday.set(secondString)
+		elif metatype == 7:
+			for root, dirnames, filenames in os.walk(path):
+				for filename in fnmatch.filter(filenames, '*.jpg'):
+					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+					metadades.read()
+					key = getCopyright(metadades)
+					if string in key:
+						imglist.insert(END, os.path.join(root, filename))
+			copyr.set(string)
+		elif metatype == 8:
+			for root, dirnames, filenames in os.walk(path):
+				for filename in fnmatch.filter(filenames, '*.jpg'):
+					metadades = pyexiv2.ImageMetadata(os.path.join(root, filename))
+					metadades.read()
+					key = getDay(metadades)
+					key2 = getMonth(metadades)
+					key3 = getYear(metadades)
+					if (string in str(key)) and (secondString in str(key2)) and (thirdString in str(key3)):
+						imglist.insert(END, os.path.join(root, filename))
+			dia.set(string)
+			mes.set(secondString)
+			year.set(thirdString)
+	else:
+		loadFiles(path)
 
 camera_frame=Frame(exif)
 camera_button=Button(camera_frame,text="Càmera:",command=lambda: searchMetadata(cleanList,directory.get(),0,camera.get()), width=10)
