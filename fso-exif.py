@@ -225,6 +225,8 @@ def mensaje_ventana(cabecera, mensaje):
 window=Tk()
 window.title("Tractament Imatge EXIF")
 window.minsize(750, 475)
+window.resizable(0,0)
+
 
 #HEADER
 
@@ -559,7 +561,8 @@ body.pack(side=TOP,expand=TRUE,fill=BOTH)
 footer=Frame(window)
 def seleccionarTots():
 	imglist.selection_set(0, imglist.size())
-	show_move_directory()
+	if len(imglist.curselection())!=0:
+		show_move_directory()
 
 def deseleccionarTots():
 	imglist.selection_clear(0, imglist.size())
