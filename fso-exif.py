@@ -47,7 +47,6 @@ def change_date(d,m,y,index):
 		window_date=Toplevel()
 		window_date.title("Canvi Data Captura")
 		window_date.focus_set()
-		imglist=Listbox(images_list,yscrollcommand=scrollist.set,selectmode='multiple')
 		data_frame=Frame(window_date)
 		data_label=Label(data_frame,text="Data captura (dia/mes/any):",anchor=W)
 		data_label.pack(side=LEFT)
@@ -80,24 +79,28 @@ def change_date(d,m,y,index):
 		mensaje_ventana("Alerta", "Selecciona com a mínim una imatge")
 
 def canviarData(day, month, year2, index,ventana):
-	if not(len(index) > 1):
-		metadades = pyexiv2.ImageMetadata(getFullPath(index))
-		metadades.read()
+	
+	try:
 		novaData = datetime.date(day=int(day), month=int(month), year=int(year2))
-		metadades['Exif.Photo.DateTimeOriginal'] = novaData
-		metadades.write()
-		mensaje_ventana("Canvi de data", "Operació completada amb exit!")
-	else:
-		for i in range(len(index)):
-			metadades = pyexiv2.ImageMetadata(getFullPath(index[i]))
+		if not(len(index) > 1):
+			metadades = pyexiv2.ImageMetadata(getFullPath(index))
 			metadades.read()
-			novaData = datetime.date(day=int(day), month=int(month), year=int(year2))
 			metadades['Exif.Photo.DateTimeOriginal'] = novaData
 			metadades.write()
-		mensaje_ventana("Canvi de data", "Operació completada amb exit! (Multiples imatges)")
-	dia.set(day)
-	mes.set(month)
-	year.set(year2)
+			mensaje_ventana("Canvi de data", "Operació completada amb exit!")
+		else:
+			for i in range(len(index)):
+				metadades = pyexiv2.ImageMetadata(getFullPath(index[i]))
+				metadades.read()
+				metadades['Exif.Photo.DateTimeOriginal'] = novaData
+				metadades.write()
+			mensaje_ventana("Canvi de data", "Operació completada amb exit! (Multiples imatges)")
+		dia.set(day)
+		mes.set(month)
+		year.set(year2)
+	except ValueError:
+		mensaje_ventana("Canvi de data", "El format de la data és incorrecte")
+
 	for i in range(len(index)):
 		imglist.selection_set(index[i])
 	ventana.destroy()
@@ -134,8 +137,8 @@ def choose_new_dir(window_newdir,newdir,imagenes_copiar,ventana):
 			shutil.copy2(getFullPath(imagenes_copiar[i]), dirname + '/' + newdir)
 		mensaje_ventana("Copia de fitxers", "Fitxers moguts amb éxit!")
 		
-		for i in xrange(len(imagenes_copiar)):
-			imglist.selection_set(imagenes_copiar[i])
+		loadFiles(directory.get())
+		
 	else:
 		mensaje_ventana("Operacio cancelada", "No es copiaran els fitxers.")
 	ventana.destroy()
