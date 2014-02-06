@@ -4,7 +4,7 @@
 # fso-exif.py
 #
 # Copyright 2013 
-# Marc Ruiz <marc.ruiz@estudiants.urv.cat> 
+# Marc Ruiz <marc.ruizr@estudiants.urv.cat> 
 # Andoni Diaz <andoni.diaz@estudiants.urv.cat>
 # 
 # Url-repo: https://github.com/Debci/Python-FSO
